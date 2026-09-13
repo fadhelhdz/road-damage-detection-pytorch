@@ -1,5 +1,5 @@
 [project]
-name = "dl-review"
+name = "road-damage-detection-pytorch"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
