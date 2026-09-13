@@ -1,0 +1,39 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Testing / tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Datasets (never commit raw data; keep the empty dir via .gitkeep)
+data/*
+!data/.gitkeep
+
+# Model checkpoints and weights
+*.pt
+*.pth
+*.onnx
+*.ckpt
+
+# Experiment tracking
+mlruns/
+runs/
+lightning_logs/
+
+# Generated reports/artifacts (keep the dir, ignore contents)
+reports/*
+!reports/.gitkeep
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
