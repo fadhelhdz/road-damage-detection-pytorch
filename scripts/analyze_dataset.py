@@ -21,7 +21,7 @@ import json
 import sys
 import pathlib
 import xml.etree.ElementTree as ET
-from collections import Counter, defaultdict
+from collections import Counter
 
 import numpy as np
 
@@ -29,6 +29,7 @@ import numpy as np
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 from data.voc import parse_voc_xml, VALID_CLASSES, NAME_TO_CODE  # noqa: E402
+from data.dedup import hash_images, cluster_from_hashes  # noqa: E402
 
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".bmp")
 CARD_TOTAL_OBJECTS = 1745  # claim in docs/dataset_card.md, to reconcile against
@@ -175,37 +176,8 @@ def size_distribution(boxes: np.ndarray, labels: list[str]) -> dict:
 
 
 # --- near-duplicate probe -----------------------------------------------------
-def dhash(path: str, hash_size: int = 8) -> int | None:
-    try:
-        from PIL import Image
-        with Image.open(path) as im:
-            im = im.convert("L").resize((hash_size + 1, hash_size), Image.LANCZOS)
-            px = np.asarray(im, dtype=np.int16)
-    except Exception:
-        return None
-    diff = px[:, 1:] > px[:, :-1]
-    h = 0
-    for bit in diff.flatten():
-        h = (h << 1) | int(bit)
-    return h
-
-
-def _popcount64(a: np.ndarray) -> np.ndarray:
-    return np.unpackbits(a.astype(np.uint64).view(np.uint8).reshape(-1, 8),
-                         axis=1).sum(axis=1)
-
-
-class _DSU:
-    def __init__(self, n): self.p = list(range(n))
-    def find(self, x):
-        while self.p[x] != x:
-            self.p[x] = self.p[self.p[x]]; x = self.p[x]
-        return x
-    def union(self, a, b):
-        ra, rb = self.find(a), self.find(b)
-        if ra != rb: self.p[ra] = rb
-
-
+# Clustering (dhash + union-find) lives in src/data/dedup.py so this report and
+# the group-aware split in src/data/split.py cluster identically.
 def near_duplicate_probe(img_dir: str, filenames: list[str],
                          hash_size: int = 8, threshold: int = 5,
                          sample: int | None = None) -> dict:
@@ -216,29 +188,12 @@ def near_duplicate_probe(img_dir: str, filenames: list[str],
         names = list(rng.choice(names, size=sample, replace=False))
         sampled = True
 
-    hashes, valid = [], []
-    for fn in names:
-        h = dhash(str(pathlib.Path(img_dir) / fn), hash_size)
-        if h is not None:
-            hashes.append(h); valid.append(fn)
+    hashes, valid = hash_images(img_dir, names, hash_size)
     if len(hashes) < 2:
         return {"error": "fewer than 2 images hashed", "n_hashed": len(hashes)}
 
-    H = np.array(hashes, dtype=np.uint64)
-    n = len(H)
-    dsu = _DSU(n)
-    n_pairs = 0
-    for i in range(n - 1):
-        d = _popcount64(H[i + 1:] ^ H[i])
-        for j in np.nonzero(d <= threshold)[0]:
-            n_pairs += 1
-            dsu.union(i, i + 1 + int(j))
-
-    clusters = defaultdict(list)
-    for idx, fn in enumerate(valid):
-        clusters[dsu.find(idx)].append(fn)
-    dup_clusters = [sorted(v) for v in clusters.values() if len(v) > 1]
-    dup_clusters.sort(key=len, reverse=True)
+    dup_clusters, n_pairs = cluster_from_hashes(hashes, valid, threshold)
+    n = len(hashes)
     involved = sum(len(c) for c in dup_clusters)
 
     return {
