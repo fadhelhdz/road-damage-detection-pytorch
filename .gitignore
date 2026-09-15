@@ -17,6 +17,10 @@ wheels/
 # Datasets (never commit raw data; keep the empty dir via .gitkeep)
 data/*
 !data/.gitkeep
+# ...but the split manifest IS committed (tiny, versioned source of truth)
+!data/splits/
+data/splits/*
+!data/splits/czech_splits.json
 
 # Model checkpoints and weights
 *.pt
