@@ -17,6 +17,10 @@ VALID_CLASSES = ("D00", "D10", "D20", "D40")
 # at M4.
 CLASS_TO_ID = {c: i + 1 for i, c in enumerate(VALID_CLASSES)}
 
+# Inverse, for decoding model predictions back to D-codes. 0 (background) has no
+# entry — detectors never emit it as a prediction label.
+ID_TO_CLASS = {i: c for c, i in CLASS_TO_ID.items()}
+
 # Keys are lowercased/stripped. Accepts both the D-codes and the descriptive
 # names used in the raw XML. The four descriptive names below are the only
 # object labels present in the Czech train subset (verified: full parse of
