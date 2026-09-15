@@ -85,8 +85,13 @@ def make_splits(ann_dir, img_dir, dup_threshold=6, seed=42) -> dict:
     Frozen test via StratifiedGroupKFold(7)[fold0]; 5 CV folds on the rest.
     Seed everything. Save to data/splits/czech_splits.json (committed, versioned).
     """
-    from utils.seed import seed_everything
-    seed_everything(seed, deterministic=False)
+    # Deterministic without torch: StratifiedGroupKFold uses its own
+    # random_state and dhash has no RNG. Seed numpy/random anyway to document
+    # intent and guard any future RNG step; skip torch seeding (a no-op for the
+    # split, and it warns on a torch-less box).
+    import random
+    random.seed(seed)
+    np.random.seed(seed)
 
     filenames, samples = _load(ann_dir, img_dir)
     if not filenames:
