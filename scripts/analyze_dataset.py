@@ -27,8 +27,8 @@ import numpy as np
 
 # --- make `src` importable and anchor data paths to the project root ----------
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-from src.data.voc import parse_voc_xml, VALID_CLASSES, NAME_TO_CODE  # noqa: E402
+sys.path.insert(0, str(ROOT / "src"))
+from data.voc import parse_voc_xml, VALID_CLASSES, NAME_TO_CODE  # noqa: E402
 
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".bmp")
 CARD_TOTAL_OBJECTS = 1745  # claim in docs/dataset_card.md, to reconcile against

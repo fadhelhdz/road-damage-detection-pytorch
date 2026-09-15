@@ -6,16 +6,14 @@ repo needs no committed binaries — the XMLs are the real, hand-written fixture
 """
 from __future__ import annotations
 
-import sys
 import pathlib
 from collections import Counter
 
 import numpy as np
 import pytest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-from src.data.voc import parse_voc_xml, Sample  # noqa: E402
+# src/ is put on sys.path by tests/conftest.py, so `data.voc` resolves.
+from data.voc import parse_voc_xml, Sample  # noqa: E402
 
 FIX = pathlib.Path(__file__).resolve().parent / "fixtures" / "mini_voc"
 ANN = FIX / "annotations"
