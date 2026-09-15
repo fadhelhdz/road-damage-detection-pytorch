@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<annotation>
+  <filename>normal_0003.jpg</filename>
+  <size><width>24</width><height>24</height><depth>3</depth></size>
+  <object>
+    <name>longitudinal crack</name>
+    <bndbox><xmin>1</xmin><ymin>1</ymin><xmax>8</xmax><ymax>20</ymax></bndbox>
+  </object>
+  <object>
+    <name>pothole</name>
+    <bndbox><xmin>10</xmin><ymin>10</ymin><xmax>20</xmax><ymax>20</ymax></bndbox>
+  </object>
+</annotation>

@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<annotation>
+  <filename>corrupt_0002.jpg</filename>
+  <size><width>24</width><height>24</height><depth>3</depth></size>
+  <object>
+    <name>other corruption</name>
+    <bndbox><xmin>1</xmin><ymin>1</ymin><xmax>10</xmax><ymax>10</ymax></bndbox>
+  </object>
+  <object>
+    <name>transverse crack</name>
+    <bndbox><xmin>2</xmin><ymin>2</ymin><xmax>12</xmax><ymax>12</ymax></bndbox>
+  </object>
+</annotation>

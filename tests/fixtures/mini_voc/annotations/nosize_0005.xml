@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<annotation>
+  <filename>nosize_0005.jpg</filename>
+  <object>
+    <name>transverse crack</name>
+    <bndbox><xmin>2</xmin><ymin>2</ymin><xmax>12</xmax><ymax>12</ymax></bndbox>
+  </object>
+</annotation>

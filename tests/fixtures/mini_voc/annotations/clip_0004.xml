@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<annotation>
+  <filename>clip_0004.jpg</filename>
+  <size><width>24</width><height>24</height><depth>3</depth></size>
+  <object>
+    <name>alligator crack</name>
+    <bndbox><xmin>18</xmin><ymin>2</ymin><xmax>30</xmax><ymax>20</ymax></bndbox>
+  </object>
+  <object>
+    <name>pothole</name>
+    <bndbox><xmin>5</xmin><ymin>5</ymin><xmax>5</xmax><ymax>15</ymax></bndbox>
+  </object>
+</annotation>

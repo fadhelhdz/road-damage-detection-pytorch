@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<annotation>
+  <folder>Czech/train</folder>
+  <filename>neg_0001.jpg</filename>
+  <size><width>24</width><height>24</height><depth>3</depth></size>
+  <segmented>0</segmented>
+</annotation>

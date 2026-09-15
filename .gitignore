@@ -33,6 +33,9 @@ lightning_logs/
 reports/*
 !reports/.gitkeep
 
+# Placeholder test fixture images (regenerated on demand, see tests/test_voc.py)
+tests/fixtures/mini_voc/images/
+
 # OS / editor
 .DS_Store
 .idea/
