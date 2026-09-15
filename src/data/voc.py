@@ -12,6 +12,11 @@ logger = logging.getLogger(__name__)
 
 VALID_CLASSES = ("D00", "D10", "D20", "D40")
 
+# Single source of truth for the torchvision detection label ids: 1-indexed,
+# with 0 reserved for background. Shared by parser/Dataset/evaluator; wired in
+# at M4.
+CLASS_TO_ID = {c: i + 1 for i, c in enumerate(VALID_CLASSES)}
+
 # Keys are lowercased/stripped. Accepts both the D-codes and the descriptive
 # names used in the raw XML. The four descriptive names below are the only
 # object labels present in the Czech train subset (verified: full parse of
