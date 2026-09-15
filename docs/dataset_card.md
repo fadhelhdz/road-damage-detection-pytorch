@@ -82,13 +82,16 @@ We use the **four official CRDDC'2022 damage categories**:
 | D20 | Alligator crack | Interconnected / mesh cracking ("crocodile" pattern) |
 | D40 | Pothole | Bowl-shaped surface depression / hole |
 
-**Note on the raw taxonomy (important for parsing).** The released XML files are not
-strictly limited to these four labels. A full parse of the distributed annotations
-surfaces an additional **`other corruption`** label (plus a couple of near-empty label
-types), so a naive reader can end up with more than four classes. Standard challenge
-practice — and our practice — is to **keep only D00/D10/D20/D40** and drop everything else.
-When loading the Czech XMLs, filter on the class label explicitly rather than trusting that
-only four labels are present.
+**Note on the raw taxonomy (important for parsing).** Across the parent RDD2022 release as
+a whole, the distributed XML files are not strictly limited to these four labels — a full
+parse surfaces an additional **`other corruption`** label (plus a couple of near-empty label
+types), so a naive reader can end up with more than four classes. In practice, the **Czech
+subset's raw labels are limited to the four official classes**: a direct parse of all 2,829
+Czech train XMLs finds only `longitudinal crack` / `transverse crack` / `alligator crack` /
+`pothole`, no stray labels. Standard challenge practice — and our practice — is still to
+**filter on the class label explicitly** (keeping only D00/D10/D20/D40) rather than trust
+that this holds for any given XML, since it's a property of this particular subset, not a
+guarantee of the format.
 
 ---
 
