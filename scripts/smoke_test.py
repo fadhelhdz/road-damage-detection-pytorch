@@ -55,11 +55,12 @@ def main():
     for k, v in losses.items():
         assert torch.isfinite(v), f"non-finite loss {k}={v}"
     total = sum(losses.values())
-    total.backward()
     print("\ntrain() loss dict:")
     for k, v in losses.items():
-        print(f"  {k:<22}: {float(v):.4f}")
-    print(f"  {'sum':<22}: {float(total):.4f}  (backward ok)")
+        print(f"  {k:<22}: {v.item():.4f}")
+    print(f"  {'sum':<22}: {total.item():.4f}")
+    total.backward()
+    print(f"  {'backward':<22}: ok")
 
     # --- eval mode: per-image prediction dicts ------------------------------
     model.eval()
