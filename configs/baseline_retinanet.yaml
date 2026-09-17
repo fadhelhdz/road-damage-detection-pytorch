@@ -7,7 +7,7 @@ data:
 
 model:
   name: retinanet
-  num_classes: 4
+  num_classes: 5   # 4 damage classes + background (0); labels are 1-indexed
   pretrained: true
 
 train:

@@ -23,7 +23,7 @@ def test_valid_config_loads_nested_types():
 
     # Values parsed with the right types
     assert cfg.model.name == "retinanet"
-    assert cfg.model.num_classes == 4
+    assert cfg.model.num_classes == 5
     assert isinstance(cfg.data.batch_size, int)
     assert isinstance(cfg.train.lr, float)
     assert isinstance(cfg.train.amp, bool)

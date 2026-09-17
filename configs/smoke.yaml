@@ -1,0 +1,22 @@
+# CPU smoke config: tiny + fast, proves the training loop end-to-end.
+# Pair with --limit N (e.g. 20) to train on a handful of images for 1 epoch.
+data:
+  dataset_root: ./data/rdd
+  image_size: 256        # small -> fast RetinaNet forward on CPU
+  batch_size: 2
+  num_workers: 0         # 0 keeps it simple/deterministic on CPU
+
+model:
+  name: retinanet
+  num_classes: 5         # 4 damage classes + background
+  pretrained: false      # random init: no COCO download, fully offline
+
+train:
+  epochs: 1
+  lr: 0.001
+  weight_decay: 0.0001
+  optimizer: sgd
+  seed: 42
+  amp: false             # AMP is CUDA-only; disabled on CPU
+  warmup_iters: 5
+  grad_clip: 1.0

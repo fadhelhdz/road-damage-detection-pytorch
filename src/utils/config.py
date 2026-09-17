@@ -32,6 +32,8 @@ class TrainConfig:
     optimizer: str = "sgd"  # one of OPTIMIZERS
     seed: int = 42
     amp: bool = True
+    warmup_iters: int = 500   # linear LR warmup over the first N iterations
+    grad_clip: float = 0.0    # max grad L2 norm; <= 0 disables clipping
 
 @dataclass
 class Config:
@@ -161,3 +163,5 @@ def _validate(cfg: Config) -> None:
         raise ConfigError(f"train.epochs must be >= 1, got {cfg.train.epochs}.")
     if cfg.train.lr <= 0:
         raise ConfigError(f"train.lr must be > 0, got {cfg.train.lr}.")
+    if cfg.train.warmup_iters < 0:
+        raise ConfigError(f"train.warmup_iters must be >= 0, got {cfg.train.warmup_iters}.")
