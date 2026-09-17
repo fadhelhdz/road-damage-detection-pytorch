@@ -4,9 +4,11 @@
     python src/training/train.py --config configs/baseline_retinanet.yaml --fold 0
     python src/training/train.py --config configs/smoke.yaml --limit 20   # CPU smoke
 
-Selects train = dev folds != fold, val = fold (see RddDataset). Checkpoints the
-last epoch and the best-by-val-loss to <output-dir>/fold<k>/. Val uses the
-train-mode/no-grad loss trick (mAP is a later milestone).
+Selects train = dev folds != fold, val = fold (see RddDataset). Checkpoints
+last.pt every epoch and lowest_val_loss.pt. Val uses the train-mode/no-grad
+loss trick — val LOSS is a diagnostic only, NOT the model-selection criterion.
+Real selection is val mAP (a later milestone); until then rely on last.pt plus
+the per-epoch metrics.
 """
 from __future__ import annotations
 
@@ -146,7 +148,12 @@ def main(argv=None):
                        run_name=f"{cfg.model.name}_fold{args.fold}",
                        params=_flat_params(cfg, args))
 
-    best_val = float("inf")
+    # val LOSS is NOT the model-selection criterion: a low val loss on a tiny or
+    # negative-heavy val fold is meaningless noise (the smoke showed 0.0466 on a
+    # single negative image). Real selection = val mAP, deferred to the eval
+    # milestone. This file only records the lowest-val-loss epoch as a diagnostic
+    # convenience; pick the final model with mAP, and lean on last.pt until then.
+    lowest_val = float("inf")
     global_step = 0
     for epoch in range(cfg.train.epochs):
         train_loss, global_step = train_one_epoch(
@@ -172,10 +179,11 @@ def main(argv=None):
             "config": dataclasses.asdict(cfg),
         }
         torch.save(ckpt, out_dir / "last.pt")
-        if val_loss < best_val:
-            best_val = val_loss
-            torch.save(ckpt, out_dir / "best.pt")
-            print(f"  new best val_loss={val_loss:.4f} -> {out_dir / 'best.pt'}")
+        if val_loss < lowest_val:
+            lowest_val = val_loss
+            torch.save(ckpt, out_dir / "lowest_val_loss.pt")
+            print(f"  lowest val_loss so far={val_loss:.4f} -> "
+                  f"{out_dir / 'lowest_val_loss.pt'} (diagnostic, not selection)")
 
     logger.close()
     print(f"done. checkpoints in {out_dir}")
