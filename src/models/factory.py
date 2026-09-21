@@ -46,23 +46,27 @@ def _build_retinanet(num_classes, min_size, max_size,
     )
     from torchvision.models.detection.retinanet import RetinaNetClassificationHead
 
-    if not pretrained:
-        # Fresh model, no network access: random backbone + a head already sized
-        # to num_classes, so no swap is needed.
-        return retinanet_resnet50_fpn(
-            weights=None, weights_backbone=None, num_classes=num_classes,
+    if pretrained:
+        # Transfer learning: load full COCO weights (90+1 classes).
+        model = retinanet_resnet50_fpn(
+            weights=RetinaNet_ResNet50_FPN_Weights.COCO_V1,
+            min_size=min_size, max_size=max_size,
+            trainable_backbone_layers=trainable_backbone_layers,
+        )
+    else:
+        # Fresh model, no network access (random init).
+        model = retinanet_resnet50_fpn(
+            weights=None, weights_backbone=None,
             min_size=min_size, max_size=max_size,
             trainable_backbone_layers=trainable_backbone_layers,
         )
 
-    # Transfer learning: load full COCO weights (90+1 classes), then replace the
-    # classification head. You can't do both in one call — passing num_classes
-    # alongside COCO weights is a head-shape mismatch.
-    model = retinanet_resnet50_fpn(
-        weights=RetinaNet_ResNet50_FPN_Weights.COCO_V1,
-        min_size=min_size, max_size=max_size,
-        trainable_backbone_layers=trainable_backbone_layers,
-    )
+    # ALWAYS swap the classification head to our num_classes + GroupNorm(32),
+    # regardless of `pretrained`. This keeps the architecture identical whether
+    # or not we started from COCO weights, so a checkpoint trained with
+    # pretrained=True loads cleanly into a pretrained=False eval build. (Passing
+    # num_classes to the constructor instead would give a *different* head — no
+    # GroupNorm — and break state_dict loading.)
     num_anchors = model.head.classification_head.num_anchors
     in_channels = model.backbone.out_channels  # 256
     model.head.classification_head = RetinaNetClassificationHead(
