@@ -8,6 +8,7 @@ dependencies = [
     "mlflow>=3.16.1",
     "numpy>=2.5.3",
     "pillow>=12.3.0",
+    "pycocotools>=2.0.11",
     "pytest>=9.1.1",
     "pyyaml>=6.0.3",
     "scikit-learn>=1.9.1",
@@ -22,9 +23,11 @@ dev = [
     "ruff>=0.16.7",
 ]
 
+# torchmetrics lives here (not base) because it pulls torch, which must come
+# from the selected cpu/cu132 index — keeping base torch-free.
 [project.optional-dependencies]
-cpu    = ["torch==2.12.1", "torchvision==0.27.1"]
-cu132  = ["torch==2.12.1", "torchvision==0.27.1"]
+cpu    = ["torch==2.12.1", "torchvision==0.27.1", "torchmetrics>=1.9.0"]
+cu132  = ["torch==2.12.1", "torchvision==0.27.1", "torchmetrics>=1.9.0"]
 
 [tool.uv]
 conflicts = [[{ extra = "cpu" }, { extra = "cu132" }]]
