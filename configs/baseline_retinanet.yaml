@@ -1,9 +1,9 @@
 # Baseline RetinaNet config.
 data:
   dataset_root: ./data/rdd
-  image_size: 800
+  image_size: 512      # 512 fits 6 GB at batch 2 + AMP (verified on GPU smoke)
   batch_size: 2
-  num_workers: 4
+  num_workers: 2       # was 4; lowered to curb DataLoader RAM growth on WSL2
 
 model:
   name: retinanet
@@ -11,9 +11,10 @@ model:
   pretrained: true
 
 train:
-  epochs: 12
-  lr: 0.01
+  epochs: 16           # cosine schedule needs a few epochs to matter (~65 min)
+  lr: 0.005            # 0.01 is the batch-16 recipe; halved for batch-2 stability
   weight_decay: 0.0001
   optimizer: sgd
   seed: 42
   amp: true
+  grad_clip: 1.0
